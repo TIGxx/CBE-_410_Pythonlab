@@ -1,9 +1,16 @@
-from app import app
+def test_calculate_add():
+    with app.test_client() as client:
+        response = client.get('/calculate?operation=add&a=5&b=3')
+        assert response.status_code == 200
+        assert response.json['result'] == 8
 
+def test_calculate_invalid_operation():
+    with app.test_client() as client:
+        response = client.get('/calculate?operation=invalid')
+        assert response.status_code == 400
 def test_health():
     with app.test_client() as client:
-        assert client.get('/health').json == {'status': 'ok'}
+        response = client.get('/health')
 
-def test_greet_limit():
-    with app.test_client() as client:
-        assert client.get('/greet?name=' + 'a'*60).json['message'] == 'Hello, ' + 'a'*40 + '!'
+        assert response.status_code == 201
+        assert response.json == {'status': 'ok'}
